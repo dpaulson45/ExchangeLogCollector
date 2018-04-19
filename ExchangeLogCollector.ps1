@@ -1244,13 +1244,22 @@ param(
         Write-Warning("[{0}] : Waiting for msinfo32.exe process to end before moving on..." -f $Script:LocalServerName)
         while((Get-Process | ?{$_.ProcessName -eq "msinfo32"}).ProcessName -eq "msinfo32")
         {
-            sleep 5;
+            Start-Sleep 5;
         }
 
-        Gcm exsetup | %{$_.FileVersionInfo} > "$copyTo\GCM.txt"
+        Get-Command exsetup | ForEach-Object{$_.FileVersionInfo} > "$copyTo\GCM.txt"
         fltmc > "$copyTo\FilterDrivers.txt"
-
-        Get-HotFix | Select Source, Description, HotFixID, InstalledBy, InstalledOn | Export-Clixml "$copyTo\HotFixInfo.xml"
+        Get-ExchangeServer | Select-Object Site,ServerRole,Edition,AdminDisplayVersion | Export-CSV "$copyTo\BasicInfo-ExchangeServers.txt"
+        Get-ExchangeServer | Format-List * | Out-File -FilePath "$copyTo\Info-ExchangeServers.txt" 
+        Get-TransportService| Select-Object Name,MessageTrackingLogEnabled | Export-CSV "$copyTo\BasicInfo-TransportService.txt"
+        Get-TransportService| Format-List * | Out-File -FilePath "$copyTo\Info-TransportServers.txt"
+        Get-MailboxTransportService | Select-Object Name,AdminDisplayVersion | Export-CSV "$copyTo\BasicInfo-MailboxTransportService.txt"
+        Get-MailboxTransportService | Format-List * | Out-File -FilePath "$copyTo\Info-MailboxTransportService.txt"
+        Get-MailboxServer | Select-Object Name,DatabaseAvailabilityGroup,MAPIEncryptionRequired,AutoDatabaseMountDial,DatabaseCopyAutoActivationPolicy | Export-CSV "$copyTo\BasicInfo-MailboxServer.txt"
+        Get-MailboxServer | Format-List * | Out-File -FilePath "$copyTo\Info-MailboxServer.txt"
+        Get-ClientAccessService | Select-Object Name,AutoDiscoverServiceInternalUri,AutoDiscoverSiteScope | Export-CSV "$copyTo\BasicInfo-ClientAccessService.txt"
+        Get-ClientAccessService | Format-List * | Out-File -FilePath "$copyTo\Info-ClientAccessService.txt"
+        Get-HotFix | Select-Object Source, Description, HotFixID, InstalledBy, InstalledOn | Export-Clixml "$copyTo\HotFixInfo.xml"
         Zip-Folder -Folder $copyTo
         Remote-DisplayScriptDebug("Function Exit: Collect-ServerInfo")
     }
