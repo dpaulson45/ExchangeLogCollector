@@ -112,7 +112,7 @@
 .PARAMETER OutlookConnectivityIssues
     To enable the command switches for the data collection to assist with determining outlook connectivity issues that are on the Exchange server.
 .PARAMETER ExperfwizLogmanName
-    To be able to set the Experfwiz Logman Name that we would be looking for. By Default "Exchange_Perfwiz"
+    To be able to set the Experfwiz Logman Name that we would be looking for. By Default "ExPerfwiz"
 .PARAMETER ExmonLogmanName
     To be able to set the Exmon Logman Name that we would be looking for. By Default "Exmon_Trace"
 .PARAMETER AcceptEULA
@@ -172,7 +172,7 @@ Param (
 [switch]$PerformanceIssues,
 [switch]$PerformanceMailflowIssues,
 [switch]$OutlookConnectivityIssues,
-[string]$ExperfwizLogmanName = "Exchange_Perfwiz",
+[string]$ExperfwizLogmanName = "ExPerfwiz",
 [string]$ExmonLogmanName = "Exmon_Trace",
 [switch]$AcceptEULA,
 [switch]$ScriptDebug
