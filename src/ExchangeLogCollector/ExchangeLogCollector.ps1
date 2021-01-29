@@ -356,7 +356,7 @@ Function Main {
             $Script:ValidServers[0].ToUpper().Equals($env:COMPUTERNAME.ToUpper()))) {
 
         $argumentList = Get-ArgumentList -Servers $Script:ValidServers
-
+        Write-Debug("Testing") -Debug
         #I can do a try catch here, but i also need to do a try catch in the remote so i don't end up failing here and assume the wrong failure location
         try {
             Invoke-Command -ComputerName $Script:ValidServers -ScriptBlock ${Function:Invoke-RemoteFunctions} -ArgumentList $argumentList -ErrorAction Stop

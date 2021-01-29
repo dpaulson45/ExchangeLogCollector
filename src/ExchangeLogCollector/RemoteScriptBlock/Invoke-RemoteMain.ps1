@@ -492,7 +492,8 @@ Function Invoke-RemoteMain {
     }
 
     if ((!$PassedInfo.ExchangeServerInfo) -and
-        !$PassedInfo.MasterServer.ToUpper().Contains($env:COMPUTERNAME.ToUpper())) {
+        (!$PassedInfo.MasterServer.ToUpper().Contains($env:COMPUTERNAME.ToUpper()) -or
+        (!$PassedInfo.DAGServerWriteInfo.Keys.ToUpper().Contains($env:COMPUTERNAME.ToUpper())))) {
         #Zip it all up
         Invoke-ZipFolder -Folder $Script:RootCopyToDirectory -ZipItAll $true -AddCompressedSize $false
     }

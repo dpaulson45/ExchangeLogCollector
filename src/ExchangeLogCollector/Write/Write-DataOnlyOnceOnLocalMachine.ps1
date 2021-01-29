@@ -23,6 +23,7 @@ Function Write-DataOnlyOnceOnLocalMachine {
         Save-DataInfoToFile -dataIn (Get-OrganizationConfig) -SaveToLocation $target -AddServerName $false
     }
 
+    <#
     if ($DAGInformation -and (-not($Script:EdgeRoleDetected))) {
         $data = Get-DAGInformation
         if ($null -ne $data) {
@@ -43,6 +44,7 @@ Function Write-DataOnlyOnceOnLocalMachine {
             Invoke-ZipFolder -Folder $create -AddCompressedSize $false
         }
     }
+    #>
 
     if ($SendConnectors) {
         $create = $RootCopyToDirectory + "\Connectors"

@@ -71,5 +71,25 @@ Function Get-ArgumentList {
     $obj | Add-Member -Name WindowsSecurityLogs -MemberType NoteProperty $WindowsSecurityLogs
     $obj | Add-Member -Name MasterServer -MemberType NoteProperty -Value $Script:MasterServer
 
+    if ($DAGInformation) {
+
+        $dags = @{}
+        foreach ($server in $obj.ServerObjects) {
+
+            if ($server.DAGMember) {
+
+                if (!$dags.ContainsValue($server.DAGName)) {
+                    $dags.Add($server.ServerName, $server.DAGName)
+                }
+
+                if ($server.ServerName -eq $Script:MasterServer) {
+                    $dags[$server.ServerName] = $server.DAGName
+                }
+            }
+        }
+
+        $obj | Add-Member -MemberType NoteProperty -Name "DAGServerWriteInfo" -Value $dags
+    }
+
     return $obj
 }
