@@ -34,6 +34,9 @@ steps:
 
   displayName: "Setting Release Information Values"
 
+- powershell: 'Get-ChildItem env:'
+  displayName: "printenv"
+
 - task: GitHubRelease@0
   displayName: 'Create GitHub Release'
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/release'))
