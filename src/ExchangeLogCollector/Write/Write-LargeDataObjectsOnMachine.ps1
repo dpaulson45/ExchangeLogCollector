@@ -208,24 +208,27 @@ Function Write-LargeDataObjectsOnMachine {
                     }
                 }
 
-        $localServerTempLocation = "{0}{1}\Exchange_DAG_Temp\" -f $Script:RootFilePath, $env:COMPUTERNAME
-        $dagWriteInformation |
-            ForEach-Object {
-                $location = "{0}{1}" -f $Script:RootFilePath, $_.ServerName
-                Write-ScriptDebug("Location of the data should be at: $location")
-                $remoteLocation = "\\{0}\{1}" -f $_.ServerName, $location.Replace(":", "$")
-                Write-ScriptDebug("Remote Copy Location: $remoteLocation")
-                $rootTempLocation = "{0}{1}\{2}_Exchange_DAG_Information\" -f $localServerTempLocation, $_.ServerName, $_.DAGInfo.Name
-                Write-ScriptDebug("Local Root Temp Location: $rootTempLocation")
-                New-Folder -NewFolders $rootTempLocation
-                $_ | Add-Member -MemberType NoteProperty -Name RootSaveToLocation -Value $rootTempLocation
-                Write-DatabaseAvailabilityGroupDataLocal -DAGWriteInfo $_
+        if ($null -ne $dagWriteInformation -and
+            $dagWriteInformation.Count -ne 0) {
+            $localServerTempLocation = "{0}{1}\Exchange_DAG_Temp\" -f $Script:RootFilePath, $env:COMPUTERNAME
+            $dagWriteInformation |
+                ForEach-Object {
+                    $location = "{0}{1}" -f $Script:RootFilePath, $_.ServerName
+                    Write-ScriptDebug("Location of the data should be at: $location")
+                    $remoteLocation = "\\{0}\{1}" -f $_.ServerName, $location.Replace(":", "$")
+                    Write-ScriptDebug("Remote Copy Location: $remoteLocation")
+                    $rootTempLocation = "{0}{1}\{2}_Exchange_DAG_Information\" -f $localServerTempLocation, $_.ServerName, $_.DAGInfo.Name
+                    Write-ScriptDebug("Local Root Temp Location: $rootTempLocation")
+                    New-Folder -NewFolders $rootTempLocation
+                    $_ | Add-Member -MemberType NoteProperty -Name RootSaveToLocation -Value $rootTempLocation
+                    Write-DatabaseAvailabilityGroupDataLocal -DAGWriteInfo $_
 
-                $zipCopyLocation = Compress-Folder -Folder $rootTempLocation -ReturnCompressedLocation $true
-                Copy-Item $zipCopyLocation $remoteLocation
-            }
-        #Remove the temp data location
-        Remove-Item $localServerTempLocation -Force -Recurse
+                    $zipCopyLocation = Compress-Folder -Folder $rootTempLocation -ReturnCompressedLocation $true
+                    Copy-Item $zipCopyLocation $remoteLocation
+                }
+            #Remove the temp data location
+            Remove-Item $localServerTempLocation -Force -Recurse
+        }
     }
 
     # Can not invoke CollectOverMetrics.ps1 script inside of a script block against a different machine.
